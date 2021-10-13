@@ -52,8 +52,8 @@ Developers
 [License]:http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.txt
 [License img]:https://img.shields.io/badge/license-CeCILL--C-blue.svg
 
-[MainRepo]:https://gitlab.in2p3.fr/ami-team/AMIMQTTClientJS
+[MainRepo]:https://gitlab.in2p3.fr/ami-team/AMIHTTPClientJS
 [MainRepo img]:https://img.shields.io/badge/Main%20Repo-gitlab.in2p3.fr-success
 
-[AltRepo]:https://github.com/ami-team/AMIMQTTClientJS
+[AltRepo]:https://github.com/ami-team/AMIHTTPClientJS
 [AltRepo img]:https://img.shields.io/badge/Alt%20Repo-github.com-success
