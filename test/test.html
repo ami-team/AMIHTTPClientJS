@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+
+		<title>Test</title>
+
+		<meta charset="utf-8" />
+
+		<style>
+
+			*, ::after, ::before {
+				box-sizing: border-box;
+			}
+
+			input[type="text"], select, textarea {
+
+				border: 1px solid #CCC;
+				border-radius: 4px;
+				padding: 4px;
+				width: 100%;
+			}
+
+			#FD5574C4_E473_5547_2ABA_A1A0C3D06014 {
+
+				border: 1px solid #CCC;
+				border-radius: 8px;
+				margin: 2rem auto;
+				padding: 16px;
+				width: 45%;
+			}
+
+			#FF479735_8BD9_BCB8_A61A_27B0B934EB6F {
+
+				background-color: black;
+				font-family: Helvetica;
+				color: white;
+			}
+
+		</style>
+
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+		<script src="../dist/ami-http-client.min.js"></script>
+
+	</head>
+	<body>
+
+		<div id="FD5574C4_E473_5547_2ABA_A1A0C3D06014">
+
+			<!-- *************************************************************************************************** -->
+
+			<div style="margin-top: 20px;">
+				Command:
+				<br />
+				<input type="text" id="CEC79BFA_4182_3783_0325_16BF28DE87FC" value="GetServerStatus" />
+			</div>
+
+			<!-- *************************************************************************************************** -->
+
+			<div style="margin-top: 10px;">
+				Converter:
+				<br />
+				<select type="text" id="AA93197B_6664_6DCD_1D1D_3B5E0BC926B2">
+					<option value="">Raw</option>
+					<option value="AMIXmlToCsv.xsl">CSV</option>
+					<option value="AMIXmlToJson.xsl">JSON</option>
+					<option value="AMIXmlToText.xsl">Text</option>
+					<option value="AMIXmlToXml.xsl">XML</option>
+				</select>
+			</div>
+
+			<!-- *************************************************************************************************** -->
+
+			<div style="margin-top: 10px;">
+
+				<button type="button" id="AC595B8F_6EB4_D12E_28BA_399E63F84D9C">Execute</button>
+
+				<button type="button" id="F3EF2F88_8239_C6FC_8B64_6520529CC815">Clean</button>
+
+			</div>
+
+			<!-- *************************************************************************************************** -->
+
+		</div>
+
+		<textarea rows="16" id="FF479735_8BD9_BCB8_A61A_27B0B934EB6F"></textarea>
+
+		<script>
+
+			/*--------------------------------------------------------------------------------------------------------*/
+
+			var client = new AMIHTTPClient('https://ami.in2p3.fr/AMI2/FrontEnd');
+
+			/*--------------------------------------------------------------------------------------------------------*/
+
+			$('#AC595B8F_6EB4_D12E_28BA_399E63F84D9C').click(function() {
+
+				client.execute(
+					$('#CEC79BFA_4182_3783_0325_16BF28DE87FC').val(), {
+						converter: $('#AA93197B_6664_6DCD_1D1D_3B5E0BC926B2').val(),
+					}
+				).done(function(data) {
+
+					$('#FF479735_8BD9_BCB8_A61A_27B0B934EB6F').val(Object.prototype.toString.call(data) === '[object Object]' ? JSON.stringify(data) : data);
+
+				}).fail(function(message) {
+
+					alert(message);
+				});
+			});
+
+			/*--------------------------------------------------------------------------------------------------------*/
+
+			$('#F3EF2F88_8239_C6FC_8B64_6520529CC815').click(function() {
+
+				$('#FF479735_8BD9_BCB8_A61A_27B0B934EB6F').val('');
+			});
+
+			/*--------------------------------------------------------------------------------------------------------*/
+
+		</script>
+
+	</body>
+</html>
