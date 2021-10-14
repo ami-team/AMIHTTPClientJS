@@ -27,6 +27,8 @@ export default class AMIHTTPClient
 
 	_converter = 'AMIXmlToJson.xsl';
 
+	_paramRegExp = new RegExp('-\\W*([a-zA-Z][a-zA-Z0-9]*)\\W*=\\W*\\?', 'g');
+
 	/*----------------------------------------------------------------------------------------------------------------*/
 	/* METHODS                                                                                                        */
 	/*----------------------------------------------------------------------------------------------------------------*/
@@ -38,37 +40,37 @@ export default class AMIHTTPClient
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
-	execute(command, settings)
+	execute(command, options)
 	{
+		options = options || {};
+
 		const result = $.Deferred();
 
 		/*------------------------------------------------------------------------------------------------------------*/
 
-		command = (command || '').trim();
+		const endpoint = (options.endpoint || this._endpoint).trim();
+		const converter = (options.converter || this._converter).trim();
+
+		const extras = options.extras || {};
+		const params = options.params || [];
+
+		const context = options.context || result;
+		const timeout = options.timeout || 120000;
 
 		/*------------------------------------------------------------------------------------------------------------*/
 
-		const endpoint = (settings.endpoint || this._endpoint).trim();
-		const converter = (settings.converter || this._converter).trim();
+		command = (command || '').trim().replace(this._paramRegExp, (x, y) => {
 
-		const context = settings.context || result;
-		const timeout = settings.timeout || 120000;
-
-		const extraParam = settings.extraParam || null;
-		const extraValue = settings.extraValue || null;
+			return `-${y}="${String(params.shift()).replace('\\', '\\\\').replace('\n', '\\n').replace('"', '\\"').replace("'", "\\'")}"`;
+		});
 
 		/*------------------------------------------------------------------------------------------------------------*/
 
-		const data = {};
-
-		data['Command'] = command;
-
-		data['Converter'] = converter;
-
-		if(extraParam)
-		{
-			data[extraParam] = extraValue;
-		}
+		const data = {
+			...extras,
+			Command: command,
+			Converter: converter,
+		};
 
 		/*------------------------------------------------------------------------------------------------------------*/
 
@@ -162,6 +164,268 @@ export default class AMIHTTPClient
 		/*------------------------------------------------------------------------------------------------------------*/
 
 		return result.promise();
+	}
+
+	/*----------------------------------------------------------------------------------------------------------------*/
+
+	signInByPassword(username, password, options)
+	{
+		options = options || {};
+
+		const result = $.Deferred();
+
+		/*------------------------------------------------------------------------------------------------------------*/
+
+		const context = options.context || result;
+
+		/*------------------------------------------------------------------------------------------------------------*/
+
+		this.execute('GetSessionInfo -AMIUser=? -AMIPass=?', {extras: {'NoCert': null}, params: [username, password]}).then((data, message) => {
+
+			const userInfo = {};
+			const roleInfo = {};
+			const bookmarkInfo = {};
+			const udpInfo = {};
+			const ssoInfo = {};
+
+			JSPath.apply('..rowset{.@type==="user"}.row.field', data).forEach((item) => {
+
+				userInfo[item['@name']] = item['$'];
+			});
+
+			JSPath.apply('..rowset{.@type==="udp"}.row.field', data).forEach((item) => {
+
+				udpInfo[item['@name']] = item['$'];
+			});
+
+			JSPath.apply('..rowset{.@type==="sso"}.row.field', data).forEach((item) => {
+
+				ssoInfo[item['@name']] = item['$'];
+			});
+
+			JSPath.apply('..rowset{.@type==="bookmark"}.row', data).forEach((row) => {
+
+				let hash = '';
+				const bookmark = {};
+
+				row.field.forEach((field) => {
+
+					bookmark[field['@name']] = field['$'];
+
+					if(field['@name'] === 'hash')
+					{
+						hash = field['$'];
+					}
+				});
+
+				bookmarkInfo[hash] = bookmark;
+			});
+
+			JSPath.apply('..rowset{.@type==="role"}.row', data).forEach((row) => {
+
+				let name = '';
+				const role = {};
+
+				row.field.forEach((field) => {
+
+					role[field['@name']] = field['$'];
+
+					if(field['@name'] === 'name')
+					{
+						name = field['$'];
+					}
+				});
+
+				roleInfo[name] = role;
+			});
+
+			result.resolveWith(context, [data, message, userInfo, roleInfo, bookmarkInfo, udpInfo, ssoInfo]);
+
+		}, (data, message) => {
+
+			result.rejectWith(context, [data, message, {AMIUser: 'guest', guestUser: 'guest'}, {}, {}, {}, {}]);
+		});
+
+		/*------------------------------------------------------------------------------------------------------------*/
+
+		return result.promise();
+	}
+
+	/*----------------------------------------------------------------------------------------------------------------*/
+
+	signInByCertificate(options)
+	{
+		options = options || {};
+
+		const result = $.Deferred();
+
+		/*------------------------------------------------------------------------------------------------------------*/
+
+		const context = options.context || result;
+
+		/*------------------------------------------------------------------------------------------------------------*/
+
+		this.execute('GetSessionInfo').then((data, message) => {
+
+			const userInfo = {};
+			const roleInfo = {};
+			const bookmarkInfo = {};
+			const udpInfo = {};
+			const ssoInfo = {};
+
+			JSPath.apply('..rowset{.@type==="user"}.row.field', data).forEach((item) => {
+
+				userInfo[item['@name']] = item['$'];
+			});
+
+			JSPath.apply('..rowset{.@type==="udp"}.row.field', data).forEach((item) => {
+
+				udpInfo[item['@name']] = item['$'];
+			});
+
+			JSPath.apply('..rowset{.@type==="sso"}.row.field', data).forEach((item) => {
+
+				ssoInfo[item['@name']] = item['$'];
+			});
+
+			JSPath.apply('..rowset{.@type==="bookmark"}.row', data).forEach((row) => {
+
+				let hash = '';
+				const bookmark = {};
+
+				row.field.forEach((field) => {
+
+					bookmark[field['@name']] = field['$'];
+
+					if(field['@name'] === 'hash')
+					{
+						hash = field['$'];
+					}
+				});
+
+				bookmarkInfo[hash] = bookmark;
+			});
+
+			JSPath.apply('..rowset{.@type==="role"}.row', data).forEach((row) => {
+
+				let name = '';
+				const role = {};
+
+				row.field.forEach((field) => {
+
+					role[field['@name']] = field['$'];
+
+					if(field['@name'] === 'name')
+					{
+						name = field['$'];
+					}
+				});
+
+				roleInfo[name] = role;
+			});
+
+			result.resolveWith(context, [data, message, userInfo, roleInfo, bookmarkInfo, udpInfo, ssoInfo]);
+
+		}, (data, message) => {
+
+			result.rejectWith(context, [data, message, {AMIUser: 'guest', guestUser: 'guest'}, {}, {}, {}, {}]);
+		});
+
+		/*------------------------------------------------------------------------------------------------------------*/
+
+		return result.promise();
+	}
+
+	/*----------------------------------------------------------------------------------------------------------------*/
+
+	signOut(options)
+	{
+		options = options || {};
+
+		const result = $.Deferred();
+
+		/*------------------------------------------------------------------------------------------------------------*/
+
+		const context = options.context || result;
+
+		/*------------------------------------------------------------------------------------------------------------*/
+
+		this.execute('GetSessionInfo -AMIUser=? -AMIPass=?', {extras: {'NoCert': null}, params: ['', '']}).then((data, message) => {
+
+			const userInfo = {};
+			const roleInfo = {};
+			const bookmarkInfo = {};
+			const udpInfo = {};
+			const ssoInfo = {};
+
+			JSPath.apply('..rowset{.@type==="user"}.row.field', data).forEach((item) => {
+
+				userInfo[item['@name']] = item['$'];
+			});
+
+			JSPath.apply('..rowset{.@type==="udp"}.row.field', data).forEach((item) => {
+
+				udpInfo[item['@name']] = item['$'];
+			});
+
+			JSPath.apply('..rowset{.@type==="sso"}.row.field', data).forEach((item) => {
+
+				ssoInfo[item['@name']] = item['$'];
+			});
+
+			JSPath.apply('..rowset{.@type==="bookmark"}.row', data).forEach((row) => {
+
+				let hash = '';
+				const bookmark = {};
+
+				row.field.forEach((field) => {
+
+					bookmark[field['@name']] = field['$'];
+
+					if(field['@name'] === 'hash')
+					{
+						hash = field['$'];
+					}
+				});
+
+				bookmarkInfo[hash] = bookmark;
+			});
+
+			JSPath.apply('..rowset{.@type==="role"}.row', data).forEach((row) => {
+
+				let name = '';
+				const role = {};
+
+				row.field.forEach((field) => {
+
+					role[field['@name']] = field['$'];
+
+					if(field['@name'] === 'name')
+					{
+						name = field['$'];
+					}
+				});
+
+				roleInfo[name] = role;
+			});
+
+			result.resolveWith(context, [data, message, userInfo, roleInfo, bookmarkInfo, udpInfo, ssoInfo]);
+
+		}, (data, message) => {
+
+			result.rejectWith(context, [data, message, {AMIUser: 'guest', guestUser: 'guest'}, {}, {}, {}, {}]);
+		});
+
+		/*------------------------------------------------------------------------------------------------------------*/
+
+		return result.promise();
+	}
+
+	/*----------------------------------------------------------------------------------------------------------------*/
+
+	jspath(path, json)
+	{
+		return JSPath.apply(path, json);
 	}
 
 	/*----------------------------------------------------------------------------------------------------------------*/
