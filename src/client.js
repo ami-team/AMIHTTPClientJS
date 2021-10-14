@@ -61,7 +61,7 @@ export default class AMIHTTPClient
 
 		command = (command || '').trim().replace(this._paramRegExp, (x, y) => {
 
-			return `-${y}="${String(params.shift()).replace('\\', '\\\\').replace('\n', '\\n').replace('"', '\\"').replace("'", "\\'")}"`;
+			return `-${y}="${String(params.shift()).replace('\\', '\\\\').replace('\n', '\\n').replace('"', '\\"').replace('\'', '\\\'')}"`;
 		});
 
 		/*------------------------------------------------------------------------------------------------------------*/

@@ -48,6 +48,7 @@ console.log('Building AMI HTTP Client for: ' + BROWSER_LIST.join(', '));
 
 const path = require('path');
 const webpack = require('webpack');
+const ESLintPlugin = require('eslint-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
 /*--------------------------------------------------------------------------------------------------------------------*/
@@ -89,6 +90,8 @@ module.exports = {
 		]
 	},
 	'plugins': [
+		new ESLintPlugin({
+		}),
 		new webpack.BannerPlugin({
 			'banner': BANNER
 		})
