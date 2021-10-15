@@ -52,6 +52,32 @@
 
 			<!-- *************************************************************************************************** -->
 
+			<div style="margin-top: 00px;">
+				Username:
+				<br />
+				<input type="text" id="FDED806A_716A_996E_D6BE_8B97F7420EB0" />
+			</div>
+
+			<div style="margin-top: 10px;">
+				Password:
+				<br />
+				<input type="text" id="EDB31955_0A29_66C8_26AD_BF4C024BD656" />
+			</div>
+
+			<!-- *************************************************************************************************** -->
+
+			<div style="margin-top: 10px;">
+
+				<button type="button" id="E2301787_B369_BB00_73E8_6A1F7034945A">Connection By Password</button>
+
+				<button type="button" id="ED4498B9_AD17_9F11_0C6C_F1BE1BC207FF">Connection By Certificate</button>
+
+				<button type="button" id="BCEB2CA1_535F_7715_0289_9909419CE1EF">Disconnection</button>
+
+			</div>
+
+			<!-- *************************************************************************************************** -->
+
 			<div style="margin-top: 20px;">
 				Command:
 				<br />
@@ -86,13 +112,78 @@
 
 		</div>
 
-		<textarea rows="27" id="FF479735_8BD9_BCB8_A61A_27B0B934EB6F"></textarea>
+		<textarea rows="19" id="FF479735_8BD9_BCB8_A61A_27B0B934EB6F"></textarea>
 
 		<script>
 
 			/*--------------------------------------------------------------------------------------------------------*/
 
+			$('#E2301787_B369_BB00_73E8_6A1F7034945A').prop('disabled', false);
+			$('#BCEB2CA1_535F_7715_0289_9909419CE1EF').prop('disabled', true);
+			$('#AC595B8F_6EB4_D12E_28BA_399E63F84D9C').prop('disabled', true);
+			$('#F3EF2F88_8239_C6FC_8B64_6520529CC815').prop('disabled', true);
+
+			/*--------------------------------------------------------------------------------------------------------*/
+
 			var client = new AMIHTTPClient('https://ami.in2p3.fr/AMI2/FrontEnd');
+
+			/*--------------------------------------------------------------------------------------------------------*/
+
+			$('#E2301787_B369_BB00_73E8_6A1F7034945A').click(function() {
+
+				client.signInByPassword(
+					$('#FDED806A_716A_996E_D6BE_8B97F7420EB0').val(),
+					$('#EDB31955_0A29_66C8_26AD_BF4C024BD656').val()
+				).done(function() {
+
+					$('#E2301787_B369_BB00_73E8_6A1F7034945A').prop('disabled', true);
+					$('#BCEB2CA1_535F_7715_0289_9909419CE1EF').prop('disabled', false);
+					$('#AC595B8F_6EB4_D12E_28BA_399E63F84D9C').prop('disabled', false);
+					$('#F3EF2F88_8239_C6FC_8B64_6520529CC815').prop('disabled', false);
+
+				}).fail(function() {
+
+					$('#E2301787_B369_BB00_73E8_6A1F7034945A').prop('disabled', false);
+					$('#BCEB2CA1_535F_7715_0289_9909419CE1EF').prop('disabled', true);
+					$('#AC595B8F_6EB4_D12E_28BA_399E63F84D9C').prop('disabled', true);
+					$('#F3EF2F88_8239_C6FC_8B64_6520529CC815').prop('disabled', true);
+				});
+			});
+
+			/*--------------------------------------------------------------------------------------------------------*/
+
+			$('#ED4498B9_AD17_9F11_0C6C_F1BE1BC207FF').click(function() {
+
+				client.signInByCertificate(
+				).done(function() {
+
+					$('#E2301787_B369_BB00_73E8_6A1F7034945A').prop('disabled', true);
+					$('#BCEB2CA1_535F_7715_0289_9909419CE1EF').prop('disabled', false);
+					$('#AC595B8F_6EB4_D12E_28BA_399E63F84D9C').prop('disabled', false);
+					$('#F3EF2F88_8239_C6FC_8B64_6520529CC815').prop('disabled', false);
+
+				}).fail(function() {
+
+					$('#E2301787_B369_BB00_73E8_6A1F7034945A').prop('disabled', false);
+					$('#BCEB2CA1_535F_7715_0289_9909419CE1EF').prop('disabled', true);
+					$('#AC595B8F_6EB4_D12E_28BA_399E63F84D9C').prop('disabled', true);
+					$('#F3EF2F88_8239_C6FC_8B64_6520529CC815').prop('disabled', true);
+				});
+			});
+
+
+			/*--------------------------------------------------------------------------------------------------------*/
+
+			$('#BCEB2CA1_535F_7715_0289_9909419CE1EF').click(function() {
+
+				client.signOut().always(function() {
+
+					$('#E2301787_B369_BB00_73E8_6A1F7034945A').prop('disabled', false);
+					$('#BCEB2CA1_535F_7715_0289_9909419CE1EF').prop('disabled', true);
+					$('#AC595B8F_6EB4_D12E_28BA_399E63F84D9C').prop('disabled', true);
+					$('#F3EF2F88_8239_C6FC_8B64_6520529CC815').prop('disabled', true);
+				});
+			});
 
 			/*--------------------------------------------------------------------------------------------------------*/
 

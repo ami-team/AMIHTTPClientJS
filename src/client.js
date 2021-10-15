@@ -37,7 +37,7 @@ export default class AMIHTTPClient
 
 	constructor(endpoint)
 	{
-		this._endpoint = endpoint;	
+		this.setEndpoint(endpoint)
 	}
 
 	/*----------------------------------------------------------------------------------------------------------------*/
@@ -170,7 +170,7 @@ export default class AMIHTTPClient
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
-	signInByPassword(username, password, options)
+	#getUserInfo(deferred, options)
 	{
 		options = options || {};
 
@@ -182,7 +182,7 @@ export default class AMIHTTPClient
 
 		/*------------------------------------------------------------------------------------------------------------*/
 
-		this.execute('GetSessionInfo -AMIUser=? -AMIPass=?', {extras: {'NoCert': null}, params: [username, password]}).then((data, message) => {
+		deferred.then((data, message) => {
 
 			const userInfo = {};
 			const roleInfo = {};
@@ -190,38 +190,28 @@ export default class AMIHTTPClient
 			const udpInfo = {};
 			const ssoInfo = {};
 
+			/*--------------------------------------------------------------------------------------------------------*/
+
 			JSPath.apply('..rowset{.@type==="user"}.row.field', data).forEach((item) => {
 
 				userInfo[item['@name']] = item['$'];
 			});
+
+			/*--------------------------------------------------------------------------------------------------------*/
 
 			JSPath.apply('..rowset{.@type==="udp"}.row.field', data).forEach((item) => {
 
 				udpInfo[item['@name']] = item['$'];
 			});
 
+			/*--------------------------------------------------------------------------------------------------------*/
+
 			JSPath.apply('..rowset{.@type==="sso"}.row.field', data).forEach((item) => {
 
 				ssoInfo[item['@name']] = item['$'];
 			});
 
-			JSPath.apply('..rowset{.@type==="bookmark"}.row', data).forEach((row) => {
-
-				let hash = '';
-				const bookmark = {};
-
-				row.field.forEach((field) => {
-
-					bookmark[field['@name']] = field['$'];
-
-					if(field['@name'] === 'hash')
-					{
-						hash = field['$'];
-					}
-				});
-
-				bookmarkInfo[hash] = bookmark;
-			});
+			/*--------------------------------------------------------------------------------------------------------*/
 
 			JSPath.apply('..rowset{.@type==="role"}.row', data).forEach((row) => {
 
@@ -241,6 +231,28 @@ export default class AMIHTTPClient
 				roleInfo[name] = role;
 			});
 
+			/*--------------------------------------------------------------------------------------------------------*/
+
+			JSPath.apply('..rowset{.@type==="bookmark"}.row', data).forEach((row) => {
+
+				let hash = '';
+				const bookmark = {};
+
+				row.field.forEach((field) => {
+
+					bookmark[field['@name']] = field['$'];
+
+					if(field['@name'] === 'hash')
+					{
+						hash = field['$'];
+					}
+				});
+
+				bookmarkInfo[hash] = bookmark;
+			});
+
+			/*--------------------------------------------------------------------------------------------------------*/
+
 			result.resolveWith(context, [data, message, userInfo, roleInfo, bookmarkInfo, udpInfo, ssoInfo]);
 
 		}, (data, message) => {
@@ -251,176 +263,44 @@ export default class AMIHTTPClient
 		/*------------------------------------------------------------------------------------------------------------*/
 
 		return result.promise();
+	}
+
+
+	/*----------------------------------------------------------------------------------------------------------------*/
+
+	signInByPassword(username, password, options)
+	{
+		return this.#getUserInfo(
+			this.execute('GetSessionInfo -AMIUser=? -AMIPass=?', {extras: {'NoCert': null}, params: [username, password]}),
+			options
+		);
 	}
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
 	signInByCertificate(options)
 	{
-		options = options || {};
-
-		const result = $.Deferred();
-
-		/*------------------------------------------------------------------------------------------------------------*/
-
-		const context = options.context || result;
-
-		/*------------------------------------------------------------------------------------------------------------*/
-
-		this.execute('GetSessionInfo').then((data, message) => {
-
-			const userInfo = {};
-			const roleInfo = {};
-			const bookmarkInfo = {};
-			const udpInfo = {};
-			const ssoInfo = {};
-
-			JSPath.apply('..rowset{.@type==="user"}.row.field', data).forEach((item) => {
-
-				userInfo[item['@name']] = item['$'];
-			});
-
-			JSPath.apply('..rowset{.@type==="udp"}.row.field', data).forEach((item) => {
-
-				udpInfo[item['@name']] = item['$'];
-			});
-
-			JSPath.apply('..rowset{.@type==="sso"}.row.field', data).forEach((item) => {
-
-				ssoInfo[item['@name']] = item['$'];
-			});
-
-			JSPath.apply('..rowset{.@type==="bookmark"}.row', data).forEach((row) => {
-
-				let hash = '';
-				const bookmark = {};
-
-				row.field.forEach((field) => {
-
-					bookmark[field['@name']] = field['$'];
-
-					if(field['@name'] === 'hash')
-					{
-						hash = field['$'];
-					}
-				});
-
-				bookmarkInfo[hash] = bookmark;
-			});
-
-			JSPath.apply('..rowset{.@type==="role"}.row', data).forEach((row) => {
-
-				let name = '';
-				const role = {};
-
-				row.field.forEach((field) => {
-
-					role[field['@name']] = field['$'];
-
-					if(field['@name'] === 'name')
-					{
-						name = field['$'];
-					}
-				});
-
-				roleInfo[name] = role;
-			});
-
-			result.resolveWith(context, [data, message, userInfo, roleInfo, bookmarkInfo, udpInfo, ssoInfo]);
-
-		}, (data, message) => {
-
-			result.rejectWith(context, [data, message, {AMIUser: 'guest', guestUser: 'guest'}, {}, {}, {}, {}]);
-		});
-
-		/*------------------------------------------------------------------------------------------------------------*/
-
-		return result.promise();
+		return this.#getUserInfo(
+			this.execute('GetSessionInfo', {extras: {}, params: []}),
+			options
+		);
 	}
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
 	signOut(options)
 	{
-		options = options || {};
+		return this.#getUserInfo(
+			this.execute('GetSessionInfo -AMIUser=? -AMIPass=?', {extras: {'NoCert': null}, params: [(((''))), ((('')))]}),
+			options
+		);
+	}
 
-		const result = $.Deferred();
+	/*----------------------------------------------------------------------------------------------------------------*/
 
-		/*------------------------------------------------------------------------------------------------------------*/
-
-		const context = options.context || result;
-
-		/*------------------------------------------------------------------------------------------------------------*/
-
-		this.execute('GetSessionInfo -AMIUser=? -AMIPass=?', {extras: {'NoCert': null}, params: ['', '']}).then((data, message) => {
-
-			const userInfo = {};
-			const roleInfo = {};
-			const bookmarkInfo = {};
-			const udpInfo = {};
-			const ssoInfo = {};
-
-			JSPath.apply('..rowset{.@type==="user"}.row.field', data).forEach((item) => {
-
-				userInfo[item['@name']] = item['$'];
-			});
-
-			JSPath.apply('..rowset{.@type==="udp"}.row.field', data).forEach((item) => {
-
-				udpInfo[item['@name']] = item['$'];
-			});
-
-			JSPath.apply('..rowset{.@type==="sso"}.row.field', data).forEach((item) => {
-
-				ssoInfo[item['@name']] = item['$'];
-			});
-
-			JSPath.apply('..rowset{.@type==="bookmark"}.row', data).forEach((row) => {
-
-				let hash = '';
-				const bookmark = {};
-
-				row.field.forEach((field) => {
-
-					bookmark[field['@name']] = field['$'];
-
-					if(field['@name'] === 'hash')
-					{
-						hash = field['$'];
-					}
-				});
-
-				bookmarkInfo[hash] = bookmark;
-			});
-
-			JSPath.apply('..rowset{.@type==="role"}.row', data).forEach((row) => {
-
-				let name = '';
-				const role = {};
-
-				row.field.forEach((field) => {
-
-					role[field['@name']] = field['$'];
-
-					if(field['@name'] === 'name')
-					{
-						name = field['$'];
-					}
-				});
-
-				roleInfo[name] = role;
-			});
-
-			result.resolveWith(context, [data, message, userInfo, roleInfo, bookmarkInfo, udpInfo, ssoInfo]);
-
-		}, (data, message) => {
-
-			result.rejectWith(context, [data, message, {AMIUser: 'guest', guestUser: 'guest'}, {}, {}, {}, {}]);
-		});
-
-		/*------------------------------------------------------------------------------------------------------------*/
-
-		return result.promise();
+	setEndpoint(endpoint)
+	{
+		if(endpoint) this._endpoint = endpoint;
 	}
 
 	/*----------------------------------------------------------------------------------------------------------------*/
