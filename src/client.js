@@ -25,11 +25,11 @@ export default class AMIHTTPClient
 	/* VARIABLES                                                                                                      */
 	/*----------------------------------------------------------------------------------------------------------------*/
 
-	_endpoint = 'http://xxyy.zz';
+	#endpoint = 'http://xxyy.zz';
 
-	_converter = 'AMIXmlToJson.xsl';
+	#converter = 'AMIXmlToJson.xsl';
 
-	_paramRegExp = new RegExp('-\\W*([a-zA-Z][a-zA-Z0-9]*)\\W*=\\W*\\?', 'g');
+	#paramRegExp = new RegExp('-\\W*([a-zA-Z][a-zA-Z0-9]*)\\W*=\\W*\\?', 'g');
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 	/* METHODS                                                                                                        */
@@ -50,8 +50,8 @@ export default class AMIHTTPClient
 
 		/*------------------------------------------------------------------------------------------------------------*/
 
-		const endpoint = (options.endpoint || this._endpoint).trim();
-		const converter = (options.converter || this._converter).trim();
+		const endpoint = (options.endpoint || this.#endpoint).trim();
+		const converter = (options.converter || this.#converter).trim();
 
 		const extras = options.extras || {};
 		const params = options.params || [];
@@ -61,7 +61,7 @@ export default class AMIHTTPClient
 
 		/*------------------------------------------------------------------------------------------------------------*/
 
-		command = (command || '').trim().replace(this._paramRegExp, (x, y) => {
+		command = (command || '').trim().replace(this.#paramRegExp, (x, y) => {
 
 			return `-${y}="${String(params.shift()).replace('\\', '\\\\').replace('\n', '\\n').replace('"', '\\"').replace('\'', '\\\'')}"`;
 		});
@@ -300,7 +300,7 @@ export default class AMIHTTPClient
 
 	setEndpoint(endpoint)
 	{
-		if(endpoint) this._endpoint = endpoint;
+		if(endpoint) this.#endpoint = endpoint;
 	}
 
 	/*----------------------------------------------------------------------------------------------------------------*/
