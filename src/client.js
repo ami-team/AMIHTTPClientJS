@@ -19,6 +19,11 @@ import JSPath from 'jspath';
 /* CLIENT                                                                                                             */
 /*--------------------------------------------------------------------------------------------------------------------*/
 
+/**
+ * The AMI command subsystem
+ * @namespace amiCommand
+ */
+
 export default class AMIHTTPClient
 {
 	/*----------------------------------------------------------------------------------------------------------------*/
@@ -41,6 +46,13 @@ export default class AMIHTTPClient
 	}
 
 	/*----------------------------------------------------------------------------------------------------------------*/
+
+	/**
+	  * Executes an AMI command
+	  * @param {String} command the AMI command
+	  * @param {Object} [options] dictionary of settings (endpoint, converter, extras, params, context, timeout)
+	  * @returns {$.Deferred} A JQuery deferred object
+	  */
 
 	execute(command, options)
 	{
