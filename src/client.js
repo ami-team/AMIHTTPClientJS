@@ -19,10 +19,8 @@ import JSPath from 'jspath';
 /* CLIENT                                                                                                             */
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-/**
- * The AMI command subsystem
- * @namespace amiCommand
- */
+/** Class representing AMI HTTP client
+  */
 
 export default class AMIHTTPClient
 {
@@ -39,6 +37,12 @@ export default class AMIHTTPClient
 	/*----------------------------------------------------------------------------------------------------------------*/
 	/* METHODS                                                                                                        */
 	/*----------------------------------------------------------------------------------------------------------------*/
+
+	/**
+	  * An AMI HTTP client
+	  * @param {String} endpoint the endpoint
+	  * @returns {AMIMQTTClient} The AMI HTTP client
+	  */
 
 	constructor(endpoint)
 	{
@@ -277,8 +281,15 @@ export default class AMIHTTPClient
 		return result.promise();
 	}
 
-
 	/*----------------------------------------------------------------------------------------------------------------*/
+
+	/**
+	  * Sign in by password
+	  * @param {username} username the username
+	  * @param {password} password the password
+	  * @param {Object} [options] dictionary of optional parameters (endpoint, converter, context, timeout)
+	  * @returns {$.Deferred} A JQuery deferred object
+	  */
 
 	signInByPassword(username, password, options)
 	{
@@ -290,6 +301,12 @@ export default class AMIHTTPClient
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
+	/**
+	  * Sign in by certificate
+	  * @param {Object} [options] dictionary of optional parameters (endpoint, converter, context, timeout)
+	  * @returns {$.Deferred} A JQuery deferred object
+	  */
+
 	signInByCertificate(options)
 	{
 		return this.#getUserInfo(
@@ -300,6 +317,12 @@ export default class AMIHTTPClient
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
+	/**
+	  * Sign out
+	  * @param {Object} [options] dictionary of optional parameters (endpoint, converter, context, timeout)
+	  * @returns {$.Deferred} A JQuery deferred object
+	  */
+
 	signOut(options)
 	{
 		return this.#getUserInfo(
@@ -309,6 +332,13 @@ export default class AMIHTTPClient
 	}
 
 	/*----------------------------------------------------------------------------------------------------------------*/
+
+	/**
+	  * Finds data within the given JSON, see {@link https://github.com/dfilatov/jspath}
+	  * @param {String} path the path
+	  * @param {Object} json the JSON
+	  * @returns {Array} The resulting array
+	  */
 
 	jspath(path, json)
 	{
