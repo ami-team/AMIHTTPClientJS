@@ -25,7 +25,7 @@ export default class AMIHTTPClient
 	/* VARIABLES                                                                                                      */
 	/*----------------------------------------------------------------------------------------------------------------*/
 
-	#endpoint = 'http://xxyy.zz';
+	#endpoint = '';
 
 	#converter = 'AMIXmlToJson.xsl';
 
@@ -37,7 +37,7 @@ export default class AMIHTTPClient
 
 	constructor(endpoint)
 	{
-		this.setEndpoint(endpoint)
+		this.#endpoint = endpoint;
 	}
 
 	/*----------------------------------------------------------------------------------------------------------------*/
@@ -294,13 +294,6 @@ export default class AMIHTTPClient
 			this.execute('GetSessionInfo -AMIUser=? -AMIPass=?', {extras: {'NoCert': null}, params: [(((''))), ((('')))]}),
 			options
 		);
-	}
-
-	/*----------------------------------------------------------------------------------------------------------------*/
-
-	setEndpoint(endpoint)
-	{
-		if(endpoint) this.#endpoint = endpoint;
 	}
 
 	/*----------------------------------------------------------------------------------------------------------------*/
