@@ -41,7 +41,7 @@ class AMIHTTPClient
 	/**
 	  * An AMI HTTP client
 	  * @param {String} endpoint the endpoint
-	  * @returns {AMIMQTTClient} The AMI HTTP client
+	  * @returns {AMIHTTPClient} The AMI HTTP client
 	  */
 
 	constructor(endpoint)
@@ -349,7 +349,7 @@ class AMIHTTPClient
 }
 
 /*--------------------------------------------------------------------------------------------------------------------*/
-/* BROWSER SUPPORT                                                                                                    */
+/* BROWSER & MODULE SUPPORT                                                                                           */
 /*--------------------------------------------------------------------------------------------------------------------*/
 
 if(typeof window !== 'undefined') window.AMIHTTPClient = AMIHTTPClient;
