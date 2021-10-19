@@ -1,6 +1,6 @@
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-//const PACKAGE = require('./package.json');
+const PACKAGE = require('./package.json');
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 
@@ -71,21 +71,31 @@ module.exports = {
 			{
 				'test': /\.js$/,
 				'exclude': /node_modules/,
-				'use': {
-					'loader': 'babel-loader',
-					'options': {
-						'comments': false,
-						'compact': false,
-						'minified': false,
-						'presets': [
-							['@babel/preset-env', {
-								'targets': {
-									'browsers': BROWSER_LIST
-								}
-							}]
-						]
+				'use': [
+					{
+						'loader': 'string-replace-loader',
+						'options': {
+							'search': '{{VERSION}}',
+							'replace': PACKAGE.version,
+							'flags': 'g'
+						}
+					},
+					{
+						'loader': 'babel-loader',
+						'options': {
+							'comments': false,
+							'compact': false,
+							'minified': false,
+							'presets': [
+								['@babel/preset-env', {
+									'targets': {
+										'browsers': BROWSER_LIST
+									}
+								}]
+							]
+						}
 					}
-				}
+				]
 			}
 
 			/*--------------------------------------------------------------------------------------------------------*/
@@ -98,10 +108,9 @@ module.exports = {
 		new JsDocPlugin({
 			'conf': '.jsdocrc.json',
 			'cwd': '.',
-			'preserveTmpFile': false,
-			'recursive': false
 		}),
 		new ESLintPlugin({
+			'failOnWarning': true
 		}),
 		new webpack.BannerPlugin({
 			'banner': BANNER
