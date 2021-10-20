@@ -197,6 +197,29 @@ class AMIHTTPClient
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
+	#g()
+	{
+		return {
+			AMIUser: 'guest',
+			guestUser: 'guest',
+			clientDNInAMI: '',
+			issuerDNInAMI: '',
+			clientDNInSession: '',
+			issuerDNInSession: '',
+			notBefore: '',
+			notAfter: '',
+			firstName: 'guest',
+			lastName: 'guest',
+			email: 'N/A',
+			country: 'N/A',
+			valid: 'false',
+			certEnabled: 'false',
+			vomsEnabled: 'false',
+		}
+	}
+
+	/*----------------------------------------------------------------------------------------------------------------*/
+
 	#getUserInfo(deferred, options)
 	{
 		options = options || {};
@@ -284,7 +307,7 @@ class AMIHTTPClient
 
 		}, (data, message) => {
 
-			result.rejectWith(context, [data, message, {AMIUser: 'guest', guestUser: 'guest'}, {}, {}, {}, {}]);
+			result.rejectWith(context, [data, message, this.#g(), {}, {}, {}, {}]);
 		});
 
 		/*------------------------------------------------------------------------------------------------------------*/
