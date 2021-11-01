@@ -30,7 +30,7 @@ class AMIHTTPClient
 
 	/**
 	 * Library version
-	 * @type {String}
+	 * @type {string}
 	 */
 
 	version = '{{VERSION}}';
@@ -51,7 +51,7 @@ class AMIHTTPClient
 
 	/**
 	  * An AMI HTTP client
-	  * @param {String} endpoint the endpoint
+	  * @param {string} endpoint the endpoint
 	  * @returns {AMIHTTPClient} The AMI HTTP client
 	  */
 
@@ -63,8 +63,20 @@ class AMIHTTPClient
 	/*----------------------------------------------------------------------------------------------------------------*/
 
 	/**
+	  * Get the client HTTP endpoint
+	  * @returns {string} The client HTTP endpoint
+	  */
+
+	getEndpoint()
+	{
+		return this.#endpoint;
+	}
+
+	/*----------------------------------------------------------------------------------------------------------------*/
+
+	/**
 	  * Executes an AMI command
-	  * @param {String} command the AMI command
+	  * @param {string} command the AMI command
 	  * @param {Object} [options] dictionary of settings (endpoint, converter, extras, params, context, timeout)
 	  * @returns {$.Deferred} A JQuery deferred object
 	  */
@@ -197,7 +209,7 @@ class AMIHTTPClient
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
-	#g()
+	#guest()
 	{
 		return {
 			AMIUser: 'guest',
@@ -307,7 +319,7 @@ class AMIHTTPClient
 
 		}, (data, message) => {
 
-			result.rejectWith(context, [data, message, this.#g(), {}, {}, {}, {}]);
+			result.rejectWith(context, [data, message, this.#guest(), {}, {}, {}, {}]);
 		});
 
 		/*------------------------------------------------------------------------------------------------------------*/
@@ -369,7 +381,7 @@ class AMIHTTPClient
 
 	/**
 	  * Finds data within the given JSON, see {@link https://github.com/dfilatov/jspath}
-	  * @param {String} path the path
+	  * @param {string} path the path
 	  * @param {Object} json the JSON
 	  * @returns {Array} The resulting array
 	  */
