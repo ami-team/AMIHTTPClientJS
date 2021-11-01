@@ -331,8 +331,8 @@ class AMIHTTPClient
 
 	/**
 	  * Sign in by password
-	  * @param {username} username the username
-	  * @param {password} password the password
+	  * @param {string} username the username
+	  * @param {string} password the password
 	  * @param {Object} [options] dictionary of optional parameters (endpoint, converter, context, timeout)
 	  * @returns {$.Deferred} A JQuery deferred object
 	  */
