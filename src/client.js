@@ -249,8 +249,7 @@ class AMIHTTPClient
 			const userInfo = {};
 			const roleInfo = {};
 			const bookmarkInfo = {};
-			const udpInfo = {};
-			const ssoInfo = {};
+			const awfInfo = {};
 
 			/*--------------------------------------------------------------------------------------------------------*/
 
@@ -261,16 +260,9 @@ class AMIHTTPClient
 
 			/*--------------------------------------------------------------------------------------------------------*/
 
-			JSPath.apply('..rowset{.@type==="udp"}.row.field', data).forEach((item) => {
+			JSPath.apply('..rowset{.@type==="awf"}.row.field', data).forEach((item) => {
 
-				udpInfo[item['@name']] = item['$'];
-			});
-
-			/*--------------------------------------------------------------------------------------------------------*/
-
-			JSPath.apply('..rowset{.@type==="sso"}.row.field', data).forEach((item) => {
-
-				ssoInfo[item['@name']] = item['$'];
+				awfInfo[item['@name']] = item['$'];
 			});
 
 			/*--------------------------------------------------------------------------------------------------------*/
@@ -315,11 +307,11 @@ class AMIHTTPClient
 
 			/*--------------------------------------------------------------------------------------------------------*/
 
-			result.resolveWith(context, [data, message, userInfo, roleInfo, bookmarkInfo, udpInfo, ssoInfo]);
+			result.resolveWith(context, [data, message, userInfo, roleInfo, bookmarkInfo, awfInfo]);
 
 		}, (data, message) => {
 
-			result.rejectWith(context, [data, message, this.#guest(), {}, {}, {}, {}]);
+			result.rejectWith(context, [data, message, this.#guest(), {}, {}, {}]);
 		});
 
 		/*------------------------------------------------------------------------------------------------------------*/
