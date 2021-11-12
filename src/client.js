@@ -102,7 +102,7 @@ class AMIHTTPClient
 
 		command = (command || '').trim().replace(this.#paramRegExp, (x, y) => {
 
-			return `-${y}="${String(params.shift()).replace('\\', '\\\\').replace('\n', '\\n').replace('"', '\\"').replace('\'', '\\\'')}"`;
+			return `-${y}=${JSON.stringify(params.shift())}`;
 		});
 
 		/*------------------------------------------------------------------------------------------------------------*/
