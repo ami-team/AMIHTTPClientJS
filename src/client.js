@@ -104,8 +104,8 @@ class AMIHTTPClient
 
 			const rawValue = params.shift();
 
-			return Object.prototype.toString.call(x) === '[object String]' ? `-${y}=${JSON.stringify(rawValue)}`
-			                                                               : `-${y}="${JSON.stringify(rawValue)}"`
+			return Object.prototype.toString.call(rawValue) === '[object String]' ? `-${y}=${JSON.stringify(rawValue)}`
+			                                                                      : `-${y}="${JSON.stringify(rawValue)}"`
 			;
 		});
 
