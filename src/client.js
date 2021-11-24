@@ -102,7 +102,11 @@ class AMIHTTPClient
 
 		command = (command || '').trim().replace(this.#paramRegExp, (x, y) => {
 
-			return `-${y}=${JSON.stringify(params.shift())}`;
+			const rawValue = params.shift();
+
+			return Object.prototype.toString.call(x) === '[object String]' ? `-${y}=${JSON.stringify(rawValue)}`
+			                                                               : `-${y}="${JSON.stringify(rawValue)}"`
+			;
 		});
 
 		/*------------------------------------------------------------------------------------------------------------*/
