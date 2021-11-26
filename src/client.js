@@ -260,6 +260,7 @@ class AMIHTTPClient
 			const userInfo = {};
 			const roleInfo = {};
 			const bookmarkInfo = {};
+			const dashboardInfo = {};
 			const awfInfo = {};
 
 			/*--------------------------------------------------------------------------------------------------------*/
@@ -318,11 +319,31 @@ class AMIHTTPClient
 
 			/*--------------------------------------------------------------------------------------------------------*/
 
-			result.resolveWith(context, [data, message, userInfo, roleInfo, bookmarkInfo, awfInfo]);
+			JSPath.apply('..rowset{.@type==="dashboard"}.row', data).forEach((row) => {
+
+				let hash = '';
+				const dashboard = {};
+
+				row.field.forEach((field) => {
+
+					dashboard[field['@name']] = field['$'];
+
+					if(field['@name'] === 'hash')
+					{
+						hash = field['$'];
+					}
+				});
+
+				dashboardInfo[hash] = dashboard;
+			});
+
+			/*--------------------------------------------------------------------------------------------------------*/
+
+			result.resolveWith(context, [data, message, userInfo, roleInfo, bookmarkInfo, dashboardInfo, awfInfo]);
 
 		}, (data, message) => {
 
-			result.rejectWith(context, [data, message, this.#guest(), {}, {}, {}]);
+			result.rejectWith(context, [data, message, this.#guest(), {}, {}, {}, {}]);
 		});
 
 		/*------------------------------------------------------------------------------------------------------------*/
