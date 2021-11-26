@@ -19,8 +19,9 @@ import JSPath from 'jspath';
 /* CLIENT                                                                                                             */
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-/** Class representing AMI HTTP client
-  */
+/**
+ * Class representing an AMI HTTP client
+ */
 
 class AMIHTTPClient
 {
@@ -50,10 +51,10 @@ class AMIHTTPClient
 	/*----------------------------------------------------------------------------------------------------------------*/
 
 	/**
-	  * An AMI HTTP client
-	  * @param {string} endpoint the endpoint
-	  * @returns {AMIHTTPClient} The AMI HTTP client
-	  */
+	 * An AMI HTTP client
+	 * @param {string} endpoint the endpoint
+	 * @returns {AMIHTTPClient} The AMI HTTP client
+	 */
 
 	constructor(endpoint)
 	{
@@ -63,9 +64,9 @@ class AMIHTTPClient
 	/*----------------------------------------------------------------------------------------------------------------*/
 
 	/**
-	  * Get the client HTTP endpoint
-	  * @returns {string} The client HTTP endpoint
-	  */
+	 * Get the client HTTP endpoint
+	 * @returns {string} The client HTTP endpoint
+	 */
 
 	getEndpoint()
 	{
@@ -75,11 +76,11 @@ class AMIHTTPClient
 	/*----------------------------------------------------------------------------------------------------------------*/
 
 	/**
-	  * Executes an AMI command
-	  * @param {string} command the AMI command
-	  * @param {Object} [options] dictionary of settings (endpoint, converter, extras, params, context, timeout)
-	  * @returns {$.Deferred} A JQuery deferred object
-	  */
+	 * Executes an AMI command
+	 * @param {string} command the AMI command
+	 * @param {Object<string,*>} [options={}] dictionary of settings (endpoint, converter, extras, params, context, timeout)
+	 * @returns {$.Promise} A JQuery promise object
+	 */
 
 	execute(command, options)
 	{
@@ -236,6 +237,12 @@ class AMIHTTPClient
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
+	/**
+	 * @param {$.Promise}
+	 * @param {Object<string,*>} [options={}]
+	 * @returns {$.Promise} A JQuery promise object
+	 */
+
 	#getUserInfo(deferred, options)
 	{
 		options = options || {};
@@ -326,12 +333,12 @@ class AMIHTTPClient
 	/*----------------------------------------------------------------------------------------------------------------*/
 
 	/**
-	  * Sign in by password
-	  * @param {string} username the username
-	  * @param {string} password the password
-	  * @param {Object} [options] dictionary of optional parameters (endpoint, converter, context, timeout)
-	  * @returns {$.Deferred} A JQuery deferred object
-	  */
+	 * Sign in by password
+	 * @param {string} username the username
+	 * @param {string} password the password
+	 * @param {Object<string,*>} [options={}] dictionary of optional parameters (endpoint, converter, context, timeout)
+	 * @returns {$.Promise} A JQuery promise object
+	 */
 
 	signInByPassword(username, password, options)
 	{
@@ -344,10 +351,10 @@ class AMIHTTPClient
 	/*----------------------------------------------------------------------------------------------------------------*/
 
 	/**
-	  * Sign in by certificate
-	  * @param {Object} [options] dictionary of optional parameters (endpoint, converter, context, timeout)
-	  * @returns {$.Deferred} A JQuery deferred object
-	  */
+	 * Sign in by certificate
+	 * @param {Object<string,*>} [options={}] dictionary of optional parameters (endpoint, converter, context, timeout)
+	 * @returns {$.Promise} A JQuery promise object
+	 */
 
 	signInByCertificate(options)
 	{
@@ -360,10 +367,10 @@ class AMIHTTPClient
 	/*----------------------------------------------------------------------------------------------------------------*/
 
 	/**
-	  * Sign out
-	  * @param {Object} [options] dictionary of optional parameters (endpoint, converter, context, timeout)
-	  * @returns {$.Deferred} A JQuery deferred object
-	  */
+	 * Sign out
+	 * @param {Object<string,*>} [options={}] dictionary of optional parameters (endpoint, converter, context, timeout)
+	 * @returns {$.Promise} A JQuery promise object
+	 */
 
 	signOut(options)
 	{
@@ -376,11 +383,11 @@ class AMIHTTPClient
 	/*----------------------------------------------------------------------------------------------------------------*/
 
 	/**
-	  * Finds data within the given JSON, see {@link https://github.com/dfilatov/jspath}
-	  * @param {string} path the path
-	  * @param {Object} json the JSON
-	  * @returns {Array} The resulting array
-	  */
+	 * Finds data within the given JSON, see {@link https://github.com/dfilatov/jspath}
+	 * @param {string} path the path
+	 * @param {Object<string,*>} json the JSON
+	 * @returns {Array<*>} The resulting array
+	 */
 
 	jspath(path, json)
 	{
