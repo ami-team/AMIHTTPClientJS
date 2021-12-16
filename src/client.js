@@ -410,7 +410,7 @@ class AMIHTTPClient
 	signInByToken(token, options)
 	{
 		return this.#getUserInfo(
-			this.execute('GetSessionInfo -AMIUser=? -AMIPass=?', {extras: {'NoCert': null}, params: [parseJwt(token).sub, token]}),
+			this.execute('GetSessionInfo -AMIUser=? -AMIPass=?', {extras: {'NoCert': null}, params: [parseJwt(token).sub, `Bearer ${token}`]}),
 			options
 		);
 	}
