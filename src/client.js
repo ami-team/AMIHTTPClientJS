@@ -16,53 +16,6 @@
 import JSPath from 'jspath';
 
 /*--------------------------------------------------------------------------------------------------------------------*/
-/* JWT                                                                                                                */
-/*--------------------------------------------------------------------------------------------------------------------*/
-
-/**
- * Parse a JWT token
- * @param {string} token the JWT token
- * @returns {Object<string,string>} The JWT token content
- */
-
-function parseJwt(token)
-{
-	try
-	{
-		const parts = token.split('.');
-
-		if(parts.length > 1)
-		{
-			/*--------------------------------------------------------------------------------------------------------*/
-			/* DECODE PAYLOAD                                                                                         */
-			/*--------------------------------------------------------------------------------------------------------*/
-
-			const payload = decodeURIComponent(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')).split('').map((c) => {
-
-				return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-
-			}).join(''));
-
-			/*--------------------------------------------------------------------------------------------------------*/
-			/* PARSE PAYLOAD                                                                                          */
-			/*--------------------------------------------------------------------------------------------------------*/
-
-			return JSON.parse(payload);
-
-			/*--------------------------------------------------------------------------------------------------------*/
-		}
-		else
-		{
-			return {};
-		}
-	}
-	catch(e)
-	{
-		return {};
-	}
-}
-
-/*--------------------------------------------------------------------------------------------------------------------*/
 /* CLIENT                                                                                                             */
 /*--------------------------------------------------------------------------------------------------------------------*/
 
@@ -401,6 +354,23 @@ class AMIHTTPClient
 	/*----------------------------------------------------------------------------------------------------------------*/
 
 	/**
+	 * Sign in by code
+	 * @param {string} code the code
+	 * @param {Object<string,*>} [options={}] dictionary of optional parameters (endpoint, converter, context, timeout)
+	 * @returns {$.Promise} A JQuery promise object
+	 */
+
+	signInByCode(code, options)
+	{
+		return this.#getUserInfo(
+			this.execute('GetSessionInfo -AMIUser="__oidc_code__" -AMIPass=?', {extras: {'NoCert': null}, params: [code]}),
+			options
+		);
+	}
+
+	/*----------------------------------------------------------------------------------------------------------------*/
+
+	/**
 	 * Sign in by token
 	 * @param {string} token the token
 	 * @param {Object<string,*>} [options={}] dictionary of optional parameters (endpoint, converter, context, timeout)
@@ -410,7 +380,7 @@ class AMIHTTPClient
 	signInByToken(token, options)
 	{
 		return this.#getUserInfo(
-			this.execute('GetSessionInfo -AMIUser=? -AMIPass=?', {extras: {'NoCert': null}, params: [parseJwt(token).sub, `Bearer ${token}`]}),
+			this.execute('GetSessionInfo -AMIUser="__oidc_token__" -AMIPass=?', {extras: {'NoCert': null}, params: [token]}),
 			options
 		);
 	}
