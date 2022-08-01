@@ -225,6 +225,7 @@ class AMIHTTPClient
 			issuerDNInSession: '',
 			notBefore: '',
 			notAfter: '',
+			mqttToken: '',
 			firstName: 'guest',
 			lastName: 'guest',
 			email: 'N/A',
