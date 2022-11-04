@@ -81,9 +81,18 @@ class AMIHTTPClient
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
-	static #error(message)
+	static #response(data, message, urlWithParameters, jsonError)
 	{
-		return {'AMIMessage': [{'error': [{'$': message}]}]};
+		if(jsonError)
+		{
+			data = {'AMIMessage': [{'error': [{'$': data}]}]};
+		}
+
+		return {
+			data: data,
+			message: message,
+			urlWithParameters: urlWithParameters,
+		};
 	}
 
 	/*----------------------------------------------------------------------------------------------------------------*/
@@ -149,7 +158,7 @@ class AMIHTTPClient
 
 				const timeoutId = setTimeout(() => {
 
-					reject([AMIHTTPClient.#error('timeout'), 'timeout', urlWithParameters]);
+					reject(AMIHTTPClient.#response('timeout', 'timeout', urlWithParameters, true));
 
 					inTime = false;
 
@@ -182,16 +191,16 @@ class AMIHTTPClient
 
 							if(error.length === 0)
 							{
-								resolve([data, info.join('. '), urlWithParameters]);
+								resolve(AMIHTTPClient.#response(data, info.join('. '), urlWithParameters, false));
 							}
 							else
 							{
-								reject([data, error.join('. '), urlWithParameters]);
+								reject(AMIHTTPClient.#response(data, error.join('. '), urlWithParameters, true));
 							}
 
 						}).catch(() => {
 
-							reject([AMIHTTPClient.#error(this.#errorMessage), this.#errorMessage, urlWithParameters]);
+							reject(AMIHTTPClient.#response(this.#errorMessage, this.#errorMessage, urlWithParameters, true));
 						});
 					}
 
@@ -199,7 +208,7 @@ class AMIHTTPClient
 
 					if(inTime)
 					{
-						reject([AMIHTTPClient.#error(this.#errorMessage), this.#errorMessage, urlWithParameters]);
+						reject(AMIHTTPClient.#response(this.#errorMessage, this.#errorMessage, urlWithParameters, true));
 					}
 				});
 
@@ -215,7 +224,7 @@ class AMIHTTPClient
 
 				const timeoutId = setTimeout(() => {
 
-					reject(['timeout', 'timeout', urlWithParameters]);
+					reject(AMIHTTPClient.#response('timeout', 'timeout', urlWithParameters, false));
 
 					inTime = false;
 
@@ -243,11 +252,11 @@ class AMIHTTPClient
 					{
 						response.text().then((data) => {
 
-							resolve([data, data, urlWithParameters]);
+							resolve(AMIHTTPClient.#response(data, data, urlWithParameters, false));
 
 						}).catch(() => {
 
-							reject([this.#errorMessage, this.#errorMessage, urlWithParameters]);
+							reject(AMIHTTPClient.#response(this.#errorMessage, this.#errorMessage, urlWithParameters, false));
 						});
 					}
 
@@ -255,7 +264,7 @@ class AMIHTTPClient
 
 					if(inTime)
 					{
-						reject([this.#errorMessage, this.#errorMessage, urlWithParameters]);
+						reject(AMIHTTPClient.#response(this.#errorMessage, this.#errorMessage, urlWithParameters, false));
 					}
 				});
 
@@ -301,7 +310,7 @@ class AMIHTTPClient
 
 		return new Promise((resolve, reject) => {
 
-			promise.then(([data, message]) => {
+			promise.then((response) => {
 
 				const userInfo = {};
 				const roleInfo = {};
@@ -311,21 +320,21 @@ class AMIHTTPClient
 
 				/*--------------------------------------------------------------------------------------------------------*/
 
-				JSPath.apply('..rowset{.@type==="user"}.row.field', data).forEach((item) => {
+				JSPath.apply('..rowset{.@type==="user"}.row.field', response.data).forEach((item) => {
 
 					userInfo[item['@name']] = item['$'];
 				});
 
 				/*--------------------------------------------------------------------------------------------------------*/
 
-				JSPath.apply('..rowset{.@type==="awf"}.row.field', data).forEach((item) => {
+				JSPath.apply('..rowset{.@type==="awf"}.row.field', response.data).forEach((item) => {
 
 					awfInfo[item['@name']] = item['$'];
 				});
 
 				/*--------------------------------------------------------------------------------------------------------*/
 
-				JSPath.apply('..rowset{.@type==="role"}.row', data).forEach((row) => {
+				JSPath.apply('..rowset{.@type==="role"}.row', response.data).forEach((row) => {
 
 					let name = '';
 					const role = {};
@@ -345,7 +354,7 @@ class AMIHTTPClient
 
 				/*--------------------------------------------------------------------------------------------------------*/
 
-				JSPath.apply('..rowset{.@type==="bookmark"}.row', data).forEach((row) => {
+				JSPath.apply('..rowset{.@type==="bookmark"}.row', response.data).forEach((row) => {
 
 					let hash = '';
 					const bookmark = {};
@@ -365,7 +374,7 @@ class AMIHTTPClient
 
 				/*--------------------------------------------------------------------------------------------------------*/
 
-				JSPath.apply('..rowset{.@type==="dashboard"}.row', data).forEach((row) => {
+				JSPath.apply('..rowset{.@type==="dashboard"}.row', response.data).forEach((row) => {
 
 					let hash = '';
 					const dashboard = {};
@@ -385,11 +394,27 @@ class AMIHTTPClient
 
 				/*--------------------------------------------------------------------------------------------------------*/
 
-				resolve([data, message, userInfo, roleInfo, bookmarkInfo, dashboardInfo, awfInfo]);
+				resolve({
+					data: response.data,
+					message: response.message,
+					userInfo: userInfo,
+					roleInfo: roleInfo,
+					bookmarkInfo: bookmarkInfo,
+					dashboardInfo: dashboardInfo,
+					awfInfo: awfInfo,
+				});
 
-			}).catch((data, message) => {
+			}).catch((response) => {
 
-				reject([data, message, AMIHTTPClient.#guest(), {}, {}, {}, {}]);
+				reject({
+					data: response.data,
+					message: response.message,
+					userInfo: AMIHTTPClient.#guest(),
+					roleInfo: {},
+					bookmarkInfo: {},
+					dashboardInfo: {},
+					awfInfo: {},
+				});
 			});
 		});
 
