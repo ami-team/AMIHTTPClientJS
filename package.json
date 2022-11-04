@@ -23,8 +23,7 @@
 	},
 	"homepage": "https://github.com/ami-team/AMIHTTPClientJS/",
 	"dependencies": {
-		"jspath": "^0.4.0",
-		"jquery": "^3.6.1"
+		"jspath": "^0.4.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.19.1",
