@@ -149,7 +149,7 @@ class AMIHTTPClient
 
 				const timeoutId = setTimeout(() => {
 
-					reject(AMIHTTPClient.#error('timeout'), 'timeout', urlWithParameters);
+					reject([AMIHTTPClient.#error('timeout'), 'timeout', urlWithParameters]);
 
 					inTime = false;
 
@@ -182,16 +182,16 @@ class AMIHTTPClient
 
 							if(error.length === 0)
 							{
-								resolve(data, info.join('. '), urlWithParameters);
+								resolve([data, info.join('. '), urlWithParameters]);
 							}
 							else
 							{
-								reject(data, error.join('. '), urlWithParameters);
+								reject([data, error.join('. '), urlWithParameters]);
 							}
 
 						}).catch(() => {
 
-							reject(AMIHTTPClient.#error(this.#errorMessage), this.#errorMessage, urlWithParameters);
+							reject([AMIHTTPClient.#error(this.#errorMessage), this.#errorMessage, urlWithParameters]);
 						});
 					}
 
@@ -199,7 +199,7 @@ class AMIHTTPClient
 
 					if(inTime)
 					{
-						reject(AMIHTTPClient.#error(this.#errorMessage), this.#errorMessage, urlWithParameters);
+						reject([AMIHTTPClient.#error(this.#errorMessage), this.#errorMessage, urlWithParameters]);
 					}
 				});
 
@@ -215,7 +215,7 @@ class AMIHTTPClient
 
 				const timeoutId = setTimeout(() => {
 
-					reject('timeout', 'timeout', urlWithParameters);
+					reject(['timeout', 'timeout', urlWithParameters]);
 
 					inTime = false;
 
@@ -243,11 +243,11 @@ class AMIHTTPClient
 					{
 						response.text().then((data) => {
 
-							resolve(data, data, urlWithParameters);
+							resolve([data, data, urlWithParameters]);
 
 						}).catch(() => {
 
-							reject(this.#errorMessage, this.#errorMessage, urlWithParameters);
+							reject([this.#errorMessage, this.#errorMessage, urlWithParameters]);
 						});
 					}
 
@@ -255,7 +255,7 @@ class AMIHTTPClient
 
 					if(inTime)
 					{
-						reject(this.#errorMessage, this.#errorMessage, urlWithParameters);
+						reject([this.#errorMessage, this.#errorMessage, urlWithParameters]);
 					}
 				});
 
@@ -301,7 +301,7 @@ class AMIHTTPClient
 
 		return new Promise((resolve, reject) => {
 
-			promise.then((data, message) => {
+			promise.then(([data, message]) => {
 
 				const userInfo = {};
 				const roleInfo = {};
@@ -385,11 +385,11 @@ class AMIHTTPClient
 
 				/*--------------------------------------------------------------------------------------------------------*/
 
-				resolve(data, message, userInfo, roleInfo, bookmarkInfo, dashboardInfo, awfInfo);
+				resolve([data, message, userInfo, roleInfo, bookmarkInfo, dashboardInfo, awfInfo]);
 
 			}).catch((data, message) => {
 
-				reject(data, message, AMIHTTPClient.#guest(), {}, {}, {}, {});
+				reject([data, message, AMIHTTPClient.#guest(), {}, {}, {}, {}]);
 			});
 		});
 
