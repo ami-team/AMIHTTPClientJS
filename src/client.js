@@ -376,20 +376,20 @@ class AMIHTTPClient
 
 				JSPath.apply('..rowset{.@type==="dashboard"}.row', response.data).forEach((row) => {
 
-					let name = '';
+					let id = '';
 					const dashboard = {};
 
 					row.field.forEach((field) => {
 
 						dashboard[field['@name']] = field['$'];
 
-						if(field['@name'] === 'name')
+						if(field['@name'] === 'id')
 						{
-							name = field['$'];
+							id = field['$'];
 						}
 					});
 
-					dashboardInfo[name] = dashboard;
+					dashboardInfo[id] = dashboard;
 				});
 
 				/*--------------------------------------------------------------------------------------------------------*/
